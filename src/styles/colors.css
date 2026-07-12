@@ -1,0 +1,38 @@
+:root {
+  /* Backgrounds */
+  --color-background: #EDE7D8;
+  --color-surface: #FBF6EC;
+  --color-white: #FFFFFF;
+
+  /* Borders */
+  --color-border: #E3DBC7;
+
+  /* Secondary Background */
+  --color-muted-background: #F2ECDD;
+
+  /* Text */
+  --color-primary-text: #1E2A47;
+  --color-secondary-text: #6B6250;
+  --color-disabled: #B4B2A9;
+
+  /* Brand */
+  --color-primary: #854F0B;
+  --color-primary-light: #FCEAD0;
+
+  /* SOS */
+  --color-danger: #C1443C;
+  --color-danger-dark: #791F1F;
+  --color-danger-text: #A32D2D;
+  --color-danger-light: #FCEBEB;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-primary-text);
+}
+
+* {
+  box-sizing: border-box;
+}
