@@ -4,7 +4,6 @@ const Sidebar = ({ currentTab, setTab, onLogout }) => {
   const navItems = [
     // { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'feeds', label: 'Feeds', icon: '📰' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
   ];
 
   const sidebarStyle = {

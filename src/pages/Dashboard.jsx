@@ -14,8 +14,8 @@ const Dashboard = ({ onLogout }) => {
       //   return <div style={{ padding: '32px', fontSize: '24px' }}>Overview Content</div>;
       case 'feeds':
         return <FeedsPage />;
-      case 'settings':
-        return <div style={{ padding: '32px', fontSize: '24px' }}>Settings Content</div>;
+      // case 'settings':
+      //   return <div style={{ padding: '32px', fontSize: '24px' }}>Settings Content</div>;
       default:
         return <FeedsPage />;
     }

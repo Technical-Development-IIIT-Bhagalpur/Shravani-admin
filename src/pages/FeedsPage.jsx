@@ -1,21 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FeedCard from '../components/FeedCard.jsx';
+import { useAuth } from 'react-oidc-context';
 
 const FeedsPage = () => {
-  const [feeds, setFeeds] = useState([
-    { 
-      id: '1', 
-      title: 'Tech News Daily', 
-      description: 'Latest updates in AI, mobile computing, and developer ecosystems.',
-      imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=60'
-    },
-    { 
-      id: '2', 
-      title: 'Design & UX Trends', 
-      description: 'Curating modern layout philosophies, color theories, and micro-interactions.',
-      imageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=500&auto=format&fit=crop&q=60'
-    },
-  ]);
+  const auth = useAuth();
+  const [feeds, setFeeds] = useState([]);
+
+  useEffect(() => {
+    const fetchFeeds = async () => {
+      try {
+        const response = await fetch('https://d35kcn9p6vo37w.cloudfront.net/api/images', {
+          headers: {
+            Authorization: `Bearer ${auth.user?.access_token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const formattedFeeds = data.map(item => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            imageUrl: item.s3_url,
+          }));
+          setFeeds(formattedFeeds);
+        } else {
+          console.error('Failed to fetch feeds');
+        }
+      } catch (error) {
+        console.error('Error fetching feeds:', error);
+      }
+    };
+
+    if (auth.isAuthenticated && auth.user?.access_token) {
+      fetchFeeds();
+    }
+  }, [auth.isAuthenticated, auth.user?.access_token]);
 
   // Modal State & Form States
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,23 +51,63 @@ const FeedsPage = () => {
     setSelectedFile(null)
   };
 
-  const handleCreateFeed = (e) => {
+  const handleCreateFeed = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    const newFeed = {
-      id: Date.now().toString(),
-      title: newTitle,
-      description: newDescription,
-      imageUrl: selectedFile ? URL.createObjectURL(selectedFile) : undefined,
-    };
+    const formData = new FormData();
+    formData.append('title', newTitle);
+    formData.append('description', newDescription);
+    if (selectedFile) {
+      formData.append('image', selectedFile);
+    }
 
-    setFeeds([...feeds, newFeed]);
-    handleCloseModal();
+    try {
+      const response = await fetch('https://d35kcn9p6vo37w.cloudfront.net/api/images', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${auth.user?.access_token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        const newFeed = {
+          id: data.id, // Using the ID returned from the server
+          title: newTitle,
+          description: newDescription,
+          imageUrl: selectedFile ? URL.createObjectURL(selectedFile) : undefined,
+        };
+
+        setFeeds([...feeds, newFeed]);
+        handleCloseModal();
+      } else {
+        console.error('Failed to create feed');
+      }
+    } catch (error) {
+      console.error('Error creating feed:', error);
+    }
   };
 
-  const handleDeleteFeed = (id) => {
-    setFeeds(feeds.filter(feed => feed.id !== id));
+  const handleDeleteFeed = async (id) => {
+    try {
+      const response = await fetch(`https://d35kcn9p6vo37w.cloudfront.net/api/images/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${auth.user?.access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        setFeeds(feeds.filter(feed => feed.id !== id));
+      } else {
+        console.error('Failed to delete feed');
+      }
+    } catch (error) {
+      console.error('Error deleting feed:', error);
+    }
   };
 
   // --- Inline Styles matching your theme ---
