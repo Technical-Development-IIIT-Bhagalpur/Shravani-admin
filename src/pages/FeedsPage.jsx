@@ -93,7 +93,7 @@ const FeedsPage = () => {
 
   const handleDeleteFeed = async (id) => {
     try {
-      const response = await fetch(`https://d35kcn9p6vo37w.cloudfront.net/api/images/${id}`, {
+      const response = await fetch(`https://d35kcn9p6vo37w.cloudfront.net/api/images?id=${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${auth.user?.access_token}`,
