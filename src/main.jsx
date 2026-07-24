@@ -9,6 +9,14 @@ const cognitoAuthConfig = {
   redirect_uri: "https://shravaniadmin.netlify.app",
   response_type: "code",
   scope: "phone openid email",
+
+  onSigninCallback: () => {
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.pathname
+    );
+  }
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(
